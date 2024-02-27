@@ -2,8 +2,10 @@ class Blob{
   
   private float minX, minY, maxX, maxY;
   private int id;
-  private int lifeSpan = 100;
+  public int lifeSpanConstant = 200;
+  private int lifeSpan = lifeSpanConstant;
   private int distConstant = 35, distConst2 = 5;
+  private int lifeSpeed = 2;
   public boolean isTaken = false, isAlone = true;
   
   public Blob(float x, float y){
@@ -28,6 +30,12 @@ class Blob{
     maxY = Math.max(maxY, y); 
   }
   
+  public PVector getCenter(){
+    float cx = minX + (maxX - minX)/2;
+    float cy = minY + (maxY - minY)/2;
+    return new PVector(cx, cy);
+  }
+  
   public void display(){
     stroke(0);
     fill(255);
@@ -49,7 +57,7 @@ class Blob{
     text(i, minX + (maxX - minX)/2, (minY + (maxY - minY)/2) + 10);
   }
 
-  public void displayWithId(){
+  public void displayId(){
     stroke(0);
     fill(255, 130);
     strokeWeight(2);
@@ -62,7 +70,7 @@ class Blob{
     text(this.id, minX + (maxX - minX)/2, (minY + (maxY - minY)/2) + 10);
   }
   
-    public void displayWithIdAndLifeSpan(){
+  public void displayIdAndLifeSpan(){
     stroke(0);
     fill(255, 130);
     strokeWeight(2);
@@ -76,12 +84,21 @@ class Blob{
     text(this.lifeSpan, minX + (maxX - minX)/2, minY);
   }
   
-  public PVector getCenter(){
-    float cx = minX + (maxX - minX)/2;
-    float cy = minY + (maxY - minY)/2;
-    return new PVector(cx, cy);
+  public void displayIdAndPosition(){
+    stroke(0);
+    fill(255, this.lifeSpan);
+    strokeWeight(2);
+    rectMode(CORNERS);
+    rect(minX, minY, maxX, maxY);
+    
+    textAlign(CENTER);
+    textSize(34);
+    fill(0);
+    text(this.id, minX + (maxX - minX)/2, (minY + (maxY - minY)/2) + 10);
+    text("(" + (int) this.getCenter().x + ", ", minX + 30 , minY);
+    text((int) this.getCenter().y + ")", minX + 110, minY);
   }
-  
+   
   public float getMinX(){
     return minX;
   }
@@ -129,8 +146,12 @@ class Blob{
     this.id = id;  
   }
   
-  public void setLifeSpan(int life){
-    this.lifeSpan = life;  
+  public void setLifeSpanConstant(int lifeConst){
+    this.lifeSpanConstant = lifeConst;  
+  }
+
+  public void resetLife(){
+    this.lifeSpan = lifeSpanConstant;  
   }
   
   public int getLifeSpan(){
@@ -142,7 +163,7 @@ class Blob{
   }
   
   public boolean isDead(){
-    this.lifeSpan--; 
+    this.lifeSpan -= lifeSpeed; 
     return (this.lifeSpan < 0);   
   }
   

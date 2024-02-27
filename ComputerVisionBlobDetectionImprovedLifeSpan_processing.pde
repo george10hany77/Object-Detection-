@@ -4,7 +4,6 @@ ArrayList<Blob> currentBlobs = new ArrayList<>();
 ArrayList<Blob> storedBlobs = new ArrayList<>();
 int idCounter = 0;
 int colConstant = 150;
-int life = 100;
 color c = color(255, 0, 0);
 
 void setup(){
@@ -50,7 +49,9 @@ void draw(){
   for(int i = 0; i < currentBlobs.size(); i++){
     if(currentBlobs.get(i).area() < 1500){
       currentBlobs.remove(i);
+      //continue; // we have to say continue as the "removed" blob with index i DNE
     }
+    //currentBlobs.get(i).display();
   }
   //////////////////////////////////////////////////////////////////////////////////////
  
@@ -61,12 +62,15 @@ void draw(){
   if(storedBlobs.isEmpty() && currentBlobs.size() > 0){
     for(Blob b : currentBlobs){
       b.setID(++idCounter);
-      b.setLifeSpan(life);
+      b.resetLife();
       storedBlobs.add(b);
     }  
     println("add new blob");
   }
-
+  //else if(currentBlobs.isEmpty() && storedBlobs.size() > 0){
+  //  storedBlobs.clear();
+  //  println("delete all blobs");
+  //}
   else if(storedBlobs.size() <= currentBlobs.size()){ // In case we have the same number or less blobs each frame
     for(Blob sB : storedBlobs){ // the nested loops are to find the closest blob for each stored blob from the current blobs
       float minDist = 100000;
@@ -82,7 +86,7 @@ void draw(){
       }
       if(closestBlob != null){
         sB.become(closestBlob);
-        sB.setLifeSpan(life);
+        sB.resetLife();
         closestBlob.isTaken = true;
       }
     }
@@ -94,6 +98,7 @@ void draw(){
          }
        }
      }
+     //println("add");
   }
   else if(storedBlobs.size() > currentBlobs.size()){ // In case we removed
     for(Blob cB : currentBlobs){ // the nested loops are to find the closest blob for each stored blob from the current blobs
@@ -110,7 +115,7 @@ void draw(){
       }
       if(closestBlob != null){
         closestBlob.become(cB);
-        closestBlob.setLifeSpan(life);
+        closestBlob.resetLife();
         closestBlob.isAlone = false;
       }
     }
@@ -122,6 +127,7 @@ void draw(){
         }
       }
     }
+   //println("remove");
   }
   //////////////////////////////////////////////////////////////////////////////////////
  
@@ -129,17 +135,21 @@ void draw(){
   //////////////////////////////////////////////////////////////////////////////////////
 
   for(Blob b : storedBlobs){
-    if(b.getLifeSpan() == life){
-      b.displayWithId();
+    if(b.getLifeSpan() == b.lifeSpanConstant){
+      b.displayId();
       b.isAlone = true; // crutial to reset isAlone and make it true
+      //print(b.isAlone + "  ");
     }
   }
+  //println();
   //////////////////////////////////////////////////////////////////////////////////////
+
 
   textAlign(LEFT);
   textSize(24);
   text("S: " + storedBlobs.size(), 10, 25);
   text("C: " + currentBlobs.size(), 10, 50);
+  
   
 }
 
